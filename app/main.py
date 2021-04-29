@@ -1,29 +1,23 @@
-from typing import Optional
+from fastapi import Depends, FastAPI
 
-from fastapi import FastAPI
-from pydantic import BaseModel
-import requests
+from app.dependencies import get_query_token, get_token_header
+from app.internal import admin
+from app.routers import items, users
+
+app = FastAPI(dependencies=[Depends(get_query_token)])
 
 
-app = FastAPI()
+app.include_router(users.router)
+app.include_router(items.router)
+app.include_router(
+    admin.router,
+    prefix="/admin",
+    tags=["admin"],
+    dependencies=[Depends(get_token_header)],
+    responses={418: {"description": "I'm a teapot"}},
+)
 
 
 @app.get("/")
-def read_root():
-    return {"Hello": "World"}
-
-
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: str = None):
-    return {"item_id": item_id, "q": q}
-
-
-class Item(BaseModel):
-    q: Optional[str] = None
-
-
-@app.post("/items/{item_id}")
-def request_items(item_id: int, item: Item):
-    host = '127.0.0.1'
-    r = requests.get(f'http://{host}/items/{item_id}', params={'q': item.q})
-    return r.json()
+async def root():
+    return {"message": "Hello Bigger Applications!"}
