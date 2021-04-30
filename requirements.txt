@@ -1,1 +1,4 @@
+passlib[bcrypt]==1.7.4
+python-jose[cryptography]==3.2.0
+python-multipart==0.0.5
 requests==2.25.1
