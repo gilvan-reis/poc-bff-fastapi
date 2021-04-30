@@ -9,12 +9,12 @@ from app.dependencies import decode_jwt_payload, oauth2_scheme, verify_password
 
 
 fake_users_db = {
-    "johndoe": {
-        "username": "johndoe",
-        "full_name": "John Doe",
-        "email": "johndoe@example.com",
-        "hashed_password": "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW",
-        "disabled": False,
+    'johndoe': {
+        'username': 'johndoe',
+        'full_name': 'John Doe',
+        'email': 'johndoe@example.com',
+        'hashed_password': '$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW',
+        'disabled': False,
     }
 }
 
@@ -54,13 +54,13 @@ def authenticate_user_in_fake_db(username: str, password: str):
 async def get_current_user(token: str = Depends(oauth2_scheme)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
+        detail='Could not validate credentials',
+        headers={'WWW-Authenticate': 'Bearer'},
     )
 
     try:
         payload = decode_jwt_payload(token)
-        username: str = payload.get("sub")
+        username: str = payload.get('sub')
         if username is None:
             raise credentials_exception
 
@@ -76,39 +76,39 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
 
 async def get_current_active_user(current_user: User = Depends(get_current_user)):
     if current_user.disabled:
-        raise HTTPException(status_code=400, detail="Inactive user")
+        raise HTTPException(status_code=400, detail='Inactive user')
 
     return current_user
 
 
 router = APIRouter(
-    prefix="/users",
-    tags=["users"],
+    prefix='/users',
+    tags=['users'],
 )
 
 
-@router.get("/")
+@router.get('/')
 async def read_users():
-    return [{"username": "Rick"}, {"username": "Morty"}]
+    return [{'username': 'Rick'}, {'username': 'Morty'}]
 
 
-@router.get("/{username}")
+@router.get('/{username}')
 async def read_user(username: str):
-    return {"username": username}
+    return {'username': username}
 
 
-@router.post("/{username}")
+@router.post('/{username}')
 async def request_items(username: str, token: str):
     host = '127.0.0.1'
     r = requests.get(f'http://{host}/users/{username}?token={token}')
     return r.json()
 
 
-@router.get("/me/", response_model=User)
+@router.get('/me/', response_model=User)
 async def read_users_me(current_user: User = Depends(get_current_active_user)):
     return current_user
 
 
-@router.get("/me/items/")
+@router.get('/me/items/')
 async def read_own_items(current_user: User = Depends(get_current_active_user)):
-    return [{"item_id": "Foo", "owner": current_user.username}]
+    return [{'item_id': 'Foo', 'owner': current_user.username}]

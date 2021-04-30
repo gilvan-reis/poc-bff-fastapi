@@ -3,6 +3,6 @@ from fastapi import APIRouter
 router = APIRouter()
 
 
-@router.post("/")
+@router.post('/')
 async def update_admin():
-    return {"message": "Admin getting schwifty"}
+    return {'message': 'Admin getting schwifty'}
