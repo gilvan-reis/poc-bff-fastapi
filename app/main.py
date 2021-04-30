@@ -1,4 +1,6 @@
 from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.inmemory import InMemoryBackend
 from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel
 
@@ -7,6 +9,11 @@ from app.internal import admin
 from app.routers import items, users
 
 app = FastAPI()
+
+
+@app.on_event('startup')
+async def startup():
+    FastAPICache.init(InMemoryBackend(), prefix='fastapi-cache')
 
 
 app.include_router(users.router)
@@ -23,6 +30,16 @@ app.include_router(
 @app.get('/')
 async def root():
     return {'message': 'Hello Bigger Applications!'}
+
+
+class ClearCacheParams(BaseModel):
+    namespace: str
+
+
+@app.post('/clear')
+async def clear_cache(params: ClearCacheParams):
+    print(f'clearing namespace: {params.namespace}')
+    return await FastAPICache.clear(namespace=params.namespace)
 
 
 class Token(BaseModel):

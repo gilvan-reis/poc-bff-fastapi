@@ -1,6 +1,7 @@
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi_cache.decorator import cache
 from jose import JWTError
 from pydantic import BaseModel
 import requests
@@ -95,7 +96,9 @@ router = APIRouter(
 
 
 @router.get('/')
+@cache(namespace='users', expire=60)
 async def read_users():
+    print('users requested')
     return [{'username': 'Rick'}, {'username': 'Morty'}]
 
 
