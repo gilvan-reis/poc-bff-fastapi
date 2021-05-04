@@ -5,8 +5,9 @@ services:
     build:
       context: .
     container_name: poc-bff-fastapi
+    env_file: .env-development
     ports:
-      - 80:80
+      - 3021:3021
     restart: unless-stopped
     volumes:
       - .:/app
