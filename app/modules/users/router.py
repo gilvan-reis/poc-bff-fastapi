@@ -16,19 +16,44 @@ users_router = APIRouter(
 @cache(namespace='read_users', expire=60)
 async def read_users():
     print('users requested')
-    return [{'username': 'Rick'}, {'username': 'Morty'}]
+    return [{'username': 'johndoe'}, {'username': 'alice'}]
+
+
+@users_router.post('/')
+async def request_last_user():
+    host = '127.0.0.1:3021'
+
+    response = requests.get(f'http://{host}/users/', timeout=4)
+    users = response.json()
+
+    username = users[-1]['username']
+    response = requests.get(f'http://{host}/users/{username}', timeout=4)
+
+    user = response.json()
+    del user['hashed_password']
+
+    item_id = 'gun'
+    token = 'jessica'
+    headers = {'X-Token': 'secret-token'}
+    response = requests.get(
+        f'http://{host}/items/{item_id}?token={token}', headers=headers, timeout=4)
+
+    item = response.json()
+    user['item_name'] = item['name']
+
+    return user
 
 
 @users_router.get('/{username}')
 async def read_user(username: str):
+    if username == 'alice':
+        return {
+            'username': 'alice',
+            'email': 'alice@example.com',
+            'hashed_password': 'XXX',
+        }
+
     return {'username': username}
-
-
-@users_router.post('/{username}')
-async def request_user(username: str, token: str):
-    host = '127.0.0.1'
-    r = requests.get(f'http://{host}/users/{username}?token={token}')
-    return r.json()
 
 
 @users_router.get('/me/', response_model=User)
