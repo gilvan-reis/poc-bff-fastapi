@@ -17,12 +17,12 @@ fake_users_db = {
         'hashed_password': '$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW',  # secret
         'disabled': False,
     },
-    "alice": {
-        "username": "alice",
-        "full_name": "Alice Wonderson",
-        "email": "alice@example.com",
-        "hashed_password": "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW",
-        "disabled": True,
+    'alice': {
+        'username': 'alice',
+        'full_name': 'Alice Wonderson',
+        'email': 'alice@example.com',
+        'hashed_password': '$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW',
+        'disabled': True,
     },
 }
 
@@ -89,36 +89,36 @@ async def get_current_active_user(current_user: User = Depends(get_current_user)
     return current_user
 
 
-router = APIRouter(
+users_router = APIRouter(
     prefix='/users',
     tags=['users'],
 )
 
 
-@router.get('/')
+@users_router.get('/')
 @cache(namespace='users', expire=60)
 async def read_users():
     print('users requested')
     return [{'username': 'Rick'}, {'username': 'Morty'}]
 
 
-@router.get('/{username}')
+@users_router.get('/{username}')
 async def read_user(username: str):
     return {'username': username}
 
 
-@router.post('/{username}')
-async def request_items(username: str, token: str):
+@users_router.post('/{username}')
+async def request_user(username: str, token: str):
     host = '127.0.0.1'
     r = requests.get(f'http://{host}/users/{username}?token={token}')
     return r.json()
 
 
-@router.get('/me/', response_model=User)
+@users_router.get('/me/', response_model=User)
 async def read_users_me(current_user: User = Depends(get_current_active_user)):
     return current_user
 
 
-@router.get('/me/items/')
+@users_router.get('/me/items/')
 async def read_own_items(current_user: User = Depends(get_current_active_user)):
     return [{'item_id': 'Foo', 'owner': current_user.username}]

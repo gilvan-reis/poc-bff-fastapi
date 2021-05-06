@@ -1,8 +1,9 @@
 from fastapi import APIRouter
 
-router = APIRouter()
+
+admin_router = APIRouter()
 
 
-@router.post('/')
+@admin_router.post('/')
 async def update_admin():
     return {'message': 'Admin getting schwifty'}
