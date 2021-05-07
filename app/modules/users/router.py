@@ -19,31 +19,6 @@ async def read_users():
     return [{'username': 'johndoe'}, {'username': 'alice'}]
 
 
-@users_router.post('/')
-async def request_last_user():
-    host = '127.0.0.1:3021'
-
-    response = requests.get(f'http://{host}/users/', timeout=4)
-    users = response.json()
-
-    username = users[-1]['username']
-    response = requests.get(f'http://{host}/users/{username}', timeout=4)
-
-    user = response.json()
-    del user['hashed_password']
-
-    item_id = 'gun'
-    token = 'jessica'
-    headers = {'X-Token': 'secret-token'}
-    response = requests.get(
-        f'http://{host}/items/{item_id}?token={token}', headers=headers, timeout=4)
-
-    item = response.json()
-    user['item_name'] = item['name']
-
-    return user
-
-
 @users_router.get('/{username}')
 async def read_user(username: str):
     if username == 'alice':
@@ -54,6 +29,29 @@ async def read_user(username: str):
         }
 
     return {'username': username}
+
+
+@users_router.get('/item')
+async def read_last_user_item():
+    host = '127.0.0.1:3021'
+
+    response = requests.get(f'http://{host}/users/', timeout=4)
+    users = response.json()
+
+    username = users[-1]['username']
+    response = requests.get(f'http://{host}/users/{username}', timeout=4)
+    result = response.json()
+    del result['hashed_password']
+
+    item_id = 'gun'
+    token = 'jessica'
+    headers = {'X-Token': 'secret-token'}
+    response = requests.get(
+        f'http://{host}/items/{item_id}?token={token}', headers=headers, timeout=4)
+    item = response.json()
+    result['item_name'] = item['name']
+
+    return result
 
 
 @users_router.get('/me/', response_model=User)
