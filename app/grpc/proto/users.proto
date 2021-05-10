@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+service Users {
+    rpc Get(UsersGetRequest) returns (UsersGetResponse) {}
+    rpc GetItem(UsersGetItemRequest) returns (UsersGetItemResponse) {}
+    rpc List(UsersListRequest) returns (UsersListResponse) {}
+}
+
+message UsersGetRequest {
+    string username = 1;
+}
+
+message UsersGetResponse {
+    string username = 1;
+    string email = 2;
+    string hashed_password = 3;
+}
+
+message UsersGetItemRequest {
+}
+
+message UsersGetItemResponse {
+    string username = 1;
+    string email = 2;
+    string item_name = 3;
+}
+
+message UsersListRequest {
+}
+
+message UsersListResponse {
+    repeated string usernames = 1;
+}

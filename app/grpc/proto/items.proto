@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+service Items {
+    rpc Get(ItemsGetRequest) returns (ItemsGetResponse) {}
+}
+
+message ItemsGetRequest {
+    string id = 1;
+}
+
+message ItemsGetResponse {
+    string id = 1;
+    string name = 2;
+}
