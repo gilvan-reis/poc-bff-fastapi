@@ -22,9 +22,9 @@ In this POC, I have included:
 1. Use `make up` to up the container.
     - Alternatively, use `make up-silent` to up the container in the background. You can use
     `make logs` to view the container logs.
-    - You can use `make grpc` and `make up-grpc` to up the gRPC server. You can make requests to it
+    - You can use `make up-grpc` to up the gRPC server. You can make requests to it
     using the host `locahost:50051`.
-    - You can use `make grpc` and `make up-grpc-homi` to up the gRPC server using the homi libary.
+    - You can use `make up-grpc-homi` to up the gRPC server using the homi libary.
     You can make requests to it using the host `locahost:50052`.
 1. Access http://127.0.0.1:3021/docs and make requests.
 1. Use `make down` to stop the container.
