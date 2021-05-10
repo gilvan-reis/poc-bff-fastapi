@@ -1,7 +1,11 @@
 from fastapi import APIRouter, Depends
 from fastapi_cache.decorator import cache
+from grpc_requests import StubClient
+from grpc_requests.client import reset_cached_client
 import requests
 
+from app.grpc.src.items_pb2 import DESCRIPTOR as ItemsDescriptor
+from app.grpc.src.users_pb2 import DESCRIPTOR as UsersDescriptor
 from app.modules.users.dependencies import get_current_active_user
 from app.modules.users.schemas import User
 
@@ -50,6 +54,35 @@ async def read_last_user_item():
         f'http://{host}/items/{item_id}?token={token}', headers=headers, timeout=4)
     item = response.json()
     result['item_name'] = item['name']
+
+    return result
+
+
+@users_router.get('/item/grpc')
+def read_user_items():
+    host = 'localhost:50051'
+
+    service_descriptor = UsersDescriptor.services_by_name['Users']
+    client = StubClient.get_by_endpoint(host, service_descriptors=[service_descriptor])
+
+    request = {}
+    response = client.request('Users', 'List', request)
+    usernames = response['usernames']
+
+    request = {'username': usernames[-1]}
+    response = client.request('Users', 'Get', request)
+    result = {'username': response.username, 'email': response.email}
+
+    # Reset grpc_request cache because it is cached by endpoint
+    reset_cached_client(host)
+
+    service_descriptor = ItemsDescriptor.services_by_name['Items']
+    client = StubClient.get_by_endpoint(host, service_descriptors=[service_descriptor])
+
+    item_id = 'gun'
+    request = {'id': item_id}
+    response = client.request('Items', 'Get', request)
+    result['item_name'] = response['name']
 
     return result
 
