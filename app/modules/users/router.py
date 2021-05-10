@@ -23,18 +23,6 @@ async def read_users():
     return [{'username': 'johndoe'}, {'username': 'alice'}]
 
 
-@users_router.get('/{username}')
-async def read_user(username: str):
-    if username == 'alice':
-        return {
-            'username': 'alice',
-            'email': 'alice@example.com',
-            'hashed_password': 'XXX',
-        }
-
-    return {'username': username}
-
-
 @users_router.get('/item')
 async def read_last_user_item():
     host = '127.0.0.1:3021'
@@ -56,6 +44,18 @@ async def read_last_user_item():
     result['item_name'] = item['name']
 
     return result
+
+
+@users_router.get('/{username}')
+async def read_user(username: str):
+    if username == 'alice':
+        return {
+            'username': 'alice',
+            'email': 'alice@example.com',
+            'hashed_password': 'XXX',
+        }
+
+    return {'username': username}
 
 
 @users_router.get(
