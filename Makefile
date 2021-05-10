@@ -22,6 +22,10 @@ up:
 up-grpc:
 	@docker-compose exec poc-bff-fastapi python app/server.py
 
+.PHONY: up-grpc-homi
+up-grpc-homi:
+	@docker-compose exec poc-bff-fastapi homi run -p 50052 app/server_homi.py
+
 .PHONY: up-silent
 up-silent:
 	@docker-compose up -d

@@ -9,6 +9,7 @@ services:
     ports:
       - 3021:3021
       - 50051:50051
+      - 50052:50052
     restart: unless-stopped
     volumes:
       - .:/app

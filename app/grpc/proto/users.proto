@@ -17,6 +17,7 @@ message UsersGetResponse {
 }
 
 message UsersGetItemRequest {
+    string port = 1;
 }
 
 message UsersGetItemResponse {

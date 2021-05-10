@@ -59,8 +59,11 @@ async def read_last_user_item():
 
 
 @users_router.get('/item/grpc')
-def read_user_items():
-    host = 'localhost:50051'
+def read_user_items(port: str = '50051'):
+    host = f'localhost:{port}'
+
+    # Reset grpc_request cache because it is cached by endpoint
+    reset_cached_client(host)
 
     service_descriptor = UsersDescriptor.services_by_name['Users']
     client = StubClient.get_by_endpoint(host, service_descriptors=[service_descriptor])
@@ -71,7 +74,7 @@ def read_user_items():
 
     request = {'username': usernames[-1]}
     response = client.request('Users', 'Get', request)
-    result = {'username': response.username, 'email': response.email}
+    result = {'username': response['username'], 'email': response['email']}
 
     # Reset grpc_request cache because it is cached by endpoint
     reset_cached_client(host)
