@@ -28,7 +28,6 @@ async def read_item(item_id: str):
 
 @items_router.put(
     '/{item_id}',
-    tags=['custom'],
     responses={403: {'description': 'Operation forbidden'}},
 )
 async def update_item(item_id: str):

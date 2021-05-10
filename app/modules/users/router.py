@@ -58,7 +58,10 @@ async def read_last_user_item():
     return result
 
 
-@users_router.get('/item/grpc')
+@users_router.get(
+    '/item/grpc',
+    tags=['grpc'],
+)
 def read_user_items(port: str = '50051'):
     host = f'localhost:{port}'
 
