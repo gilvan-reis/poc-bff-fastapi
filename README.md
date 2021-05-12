@@ -13,7 +13,7 @@ In this POC, I have included:
 ## Requirements
 
 - Docker (version used `20.10.5`).
-- Docker (version used `1.27.4`).
+- docker-compose (version used `1.27.4`).
 - Makefile (version used `4.1`).
 
 ## Quick Start
