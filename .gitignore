@@ -129,4 +129,5 @@ dmypy.json
 .pyre/
 
 # compiled gRPC files
-app/grpc/src/
+app/grpc/src/*
+!app/grpc/src/.keep
