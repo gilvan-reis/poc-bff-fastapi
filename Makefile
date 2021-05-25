@@ -1,7 +1,7 @@
 .PHONY: build
 build:
 	@docker-compose build
-	${make grpc}
+	$(MAKE) grpc
 
 .PHONY: down
 down:
