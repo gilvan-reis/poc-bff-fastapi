@@ -61,7 +61,7 @@ async def read_user(username: str):
     '/item/grpc',
     tags=['grpc'],
 )
-async def read_user_items(port: str = '50051'):
+async def read_user_items(port: str = '50051', item_id: str = 'gun'):
     host = f'localhost:{port}'
 
     users_service = UsersDescriptor.services_by_name['Users']
@@ -78,7 +78,6 @@ async def read_user_items(port: str = '50051'):
     response = await user_service.Get(request)
     result = {'username': response['username'], 'email': response['email']}
 
-    item_id = 'gun'
     request = {'id': item_id}
     response = await Item_service.Get(request)
     result['item_name'] = response['name']
