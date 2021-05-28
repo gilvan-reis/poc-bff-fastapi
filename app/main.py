@@ -1,9 +1,11 @@
-from fastapi import Depends, FastAPI
+from fastapi import Depends, FastAPI, Request
+from fastapi.responses import JSONResponse
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.inmemory import InMemoryBackend
+from grpc import RpcError
 
 from app.modules.admin.router import admin_router
-from app.modules.dependencies import get_token_header
+from app.modules.dependencies import get_http_status_code_from_grpc_status, get_token_header
 from app.modules.items.router import items_router
 from app.modules.router import root_router
 from app.modules.users.router import users_router
@@ -14,6 +16,16 @@ app = FastAPI(
     description='This project test the utilization of FastApi as a BFF',
     version='1.0.0',
 )
+
+
+@app.exception_handler(RpcError)
+async def handle_rpc_error(request: Request, exc: RpcError):
+    return JSONResponse(
+        status_code=get_http_status_code_from_grpc_status(exc.code()),
+        content={
+            'detail': exc.details(),
+        },
+    )
 
 
 @app.on_event('startup')
