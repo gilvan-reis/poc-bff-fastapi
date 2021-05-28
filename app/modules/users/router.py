@@ -6,7 +6,7 @@ import requests
 from app.grpc.src.items_pb2 import DESCRIPTOR as ItemsDescriptor
 from app.grpc.src.users_pb2 import DESCRIPTOR as UsersDescriptor
 from app.modules.users.dependencies import get_current_active_user
-from app.modules.users.schemas import User
+from app.modules.users.schemas import ReadUserItemsResponse, User
 
 
 users_router = APIRouter(
@@ -60,6 +60,9 @@ async def read_user(username: str):
 @users_router.get(
     '/item/grpc',
     tags=['grpc'],
+    responses={
+        200: {'model': ReadUserItemsResponse, 'description': 'Last user Item'},
+    },
 )
 async def read_user_items(port: str = '50051', item_id: str = 'gun'):
     host = f'localhost:{port}'

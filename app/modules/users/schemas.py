@@ -12,3 +12,9 @@ class User(BaseModel):
 
 class UserInDB(User):
     hashed_password: str
+
+
+class ReadUserItemsResponse(BaseModel):
+    username: str
+    email: Optional[str] = None
+    item_name: Optional[str] = None
