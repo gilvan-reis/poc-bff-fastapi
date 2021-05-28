@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from fastapi_cache.decorator import cache
-from grpc_requests import StubClient
+from grpc_requests.aio import StubAsyncClient
 import requests
 
 from app.grpc.src.items_pb2 import DESCRIPTOR as ItemsDescriptor
@@ -61,24 +61,26 @@ async def read_user(username: str):
     '/item/grpc',
     tags=['grpc'],
 )
-def read_user_items(port: str = '50051'):
+async def read_user_items(port: str = '50051'):
     host = f'localhost:{port}'
 
     users_service = UsersDescriptor.services_by_name['Users']
     items_service = ItemsDescriptor.services_by_name['Items']
-    client = StubClient.get_by_endpoint(host, service_descriptors=[users_service, items_service])
+    client = StubAsyncClient(host, service_descriptors=[users_service, items_service])
+    user_service = await client.service('Users')
+    Item_service = await client.service('Items')
 
     request = {}
-    response = client.request('Users', 'List', request)
+    response = await user_service.List(request)
     usernames = response['usernames']
 
     request = {'username': usernames[-1]}
-    response = client.request('Users', 'Get', request)
+    response = await user_service.Get(request)
     result = {'username': response['username'], 'email': response['email']}
 
     item_id = 'gun'
     request = {'id': item_id}
-    response = client.request('Items', 'Get', request)
+    response = await Item_service.Get(request)
     result['item_name'] = response['name']
 
     return result
